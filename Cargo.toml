@@ -1,0 +1,16 @@
+[package]
+name = "pingme"
+version = "0.1.0"
+edition = "2021"
+categories = ["command-line-utilities"]
+description = "Send a message to yourself via iMessage, falling back to text-to-speech"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/jelder/pingme"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.71"
+clap = { version = "4.2.7", features = ["wrap_help", "env", "derive"] }
+home = "0.5.5"
+plist = "1.4.3"
