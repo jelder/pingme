@@ -36,7 +36,7 @@ fn main() -> Result<()> {
                 a.as_dictionary()
                     .and_then(|a| a.get("LoggedIn"))
                     .and_then(|logged_in| logged_in.as_boolean())
-                    .unwrap()
+                    .unwrap_or(false)
             })
         })
         .and_then(|account| account.as_dictionary())
