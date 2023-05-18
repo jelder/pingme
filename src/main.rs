@@ -21,12 +21,21 @@ fn main() -> Result<()> {
     let mut home_dir: PathBuf = home::home_dir().expect("Home directory not found");
     home_dir.push(PLIST_PATH);
 
-    // let mut file = File::open(&home_dir)?;
-    // let mut contents = String::new();
-    // file.read_to_string(&mut contents)?;
+    if let Some(account) = get_account_id() {
+        send(&account, &cli.message)?;
+    } else {
+        eprintln!("Couldn't find a logged-in iCloud account in {PLIST_PATH}");
+        say(&cli.message)?;
+    }
 
-    // let accounts = Value::from_file(home_dir).expect("failed to read book.plist");
-    if let Some(account) = Value::from_file(&home_dir)
+    Ok(())
+}
+
+fn get_account_id() -> Option<String> {
+    let mut home_dir: PathBuf = home::home_dir().expect("Home directory not found");
+    home_dir.push(PLIST_PATH);
+
+    Value::from_file(&home_dir)
         .unwrap_or_else(|_| panic!("Failed to read {:?}", home_dir))
         .as_dictionary()
         .and_then(|dict| dict.get("Accounts"))
@@ -42,14 +51,7 @@ fn main() -> Result<()> {
         .and_then(|account| account.as_dictionary())
         .and_then(|account| account.get("AccountID"))
         .and_then(|account_id| account_id.as_string())
-    {
-        send(account, &cli.message)?;
-    } else {
-        eprintln!("Couldn't find a logged-in iCloud account in {PLIST_PATH}");
-        say(&cli.message)?;
-    }
-
-    Ok(())
+        .map(|str| str.to_owned())
 }
 
 fn send(account: &str, message: &str) -> Result<ExitStatus> {
